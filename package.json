@@ -1,0 +1,19 @@
+{
+  "name": "lego-controller",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url '.' "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lego-connect-browser": "file:../lego-connect-browser",
+    "parcel": "^1.12.4"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.3"
+  }
+}
