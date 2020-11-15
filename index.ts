@@ -10,9 +10,16 @@ shutdownButton.addEventListener("click", shutdown)
 
 const devicesDiv = document.getElementById('devices')
 
+const swPath= 'service-worker.js'
+navigator.serviceWorker.register(swPath).then(reg => {
+  console.log("Service worker registered", reg)
+})
+  
+
 async function connectToBoost() {
   hub = await scanForHubs();
   if (!hub) return;
+  await navigator.wakeLock.request('screen')
 
   connectButton.hidden = true
   shutdownButton.hidden = false
