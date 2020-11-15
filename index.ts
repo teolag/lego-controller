@@ -1,6 +1,8 @@
-import {Device, DeviceType, Hub, HubRGB, HubRGBColor, scanForHubs} from 'lego-connect-browser'
+import {Device, DeviceType, FakeHub, Hub, HubRGB, HubRGBColor, Port, scanForHubs, TachoMotor} from 'lego-connect-browser'
 import { HubRGBController } from './devices/hub-rgb-controller'
+import { HorizontalJoystick } from './input-types/horizontal-joystick'
 let hub: Hub
+let fakeHub: FakeHub
 
 const connectButton = document.getElementById('connectButton')
 connectButton.addEventListener("click", connectToBoost)
@@ -14,6 +16,15 @@ const swPath= 'service-worker.js'
 navigator.serviceWorker.register(swPath).then(reg => {
   console.log("Service worker registered", reg)
 })
+
+fakeHub = new FakeHub()
+fakeHub.on('deviceConnected', device => {
+  console.log("fake device found", device)
+  const joy = new HorizontalJoystick()
+  devicesDiv.appendChild(joy.getRootElement())
+
+})
+fakeHub.addFakeDevice(DeviceType.INTERNAL_TACHO_MOTOR, Port.A)
   
 
 async function connectToBoost() {
