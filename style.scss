@@ -10,20 +10,48 @@ body {
 
 
 .horizontal-joystick {
+  display: flex;
+  justify-content: space-between;
   width: 300px;
-  height: 40px;
-  background-color: gray;
-  position: relative;
-}
+	height: 40px;
+	background-color: #ddd;
+	position: relative;
+	border-radius: 20px;
+	border: 5px solid #aaa;
+  box-sizing: border-box;
+  line-height: 30px;
+	padding: 0 12px;
+	font-weight: bold;
+  color: #777;
+  touch-action: none;
+  
+  .name {
+    position: relative;
+  }
 
-.horizontal-joystick--plupp {
-  width: 30px;
-  height: 30px;
-  background-color: #ddd;
-  border-radius: 50%;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-top: -15px;
-  margin-left: -15px;
+  .value {
+    position: relative;
+    text-align: right;
+  }
+
+  .plupp {
+    width: 30px;
+    height: 30px;
+    background-color: #666;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    touch-action: none;
+  
+    &.grabbed {
+      background-color: rgb(129, 72, 167);
+    }
+  
+    &:not(.grabbed) {
+      transition: transform 0.2s ;
+    }
+  }
 }

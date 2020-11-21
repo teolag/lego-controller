@@ -17,20 +17,11 @@ navigator.serviceWorker.register(swPath).then(reg => {
   console.log("Service worker registered", reg)
 })
 
-fakeHub = new FakeHub()
-fakeHub.on('deviceConnected', device => {
-  console.log("fake device found", device)
-  const joy = new HorizontalJoystick()
-  devicesDiv.appendChild(joy.getRootElement())
-
-})
-fakeHub.addFakeDevice(DeviceType.INTERNAL_TACHO_MOTOR, Port.A)
-  
 
 async function connectToBoost() {
   hub = await scanForHubs();
   if (!hub) return;
-  await navigator.wakeLock.request('screen')
+  await navigator['wakeLock'].request('screen')
 
   connectButton.hidden = true
   shutdownButton.hidden = false
@@ -47,6 +38,20 @@ async function connectToBoost() {
       const root = document.createElement('div')
       const hubRGB = new HubRGBController(root, device)
       devicesDiv.appendChild(root)
+    }
+
+    if(isInternalTachoMotor(device, Port.A)) {
+      console.log("Motor on port A found", device)
+      const joy = new HorizontalJoystick({name: 'Motor A', minOutput: -5, maxOutput: 30, steps: 1})
+      devicesDiv.appendChild(joy.getRootElement())
+      joy.onChange(value => device.startMotor(value, value===0 ? 0 : 100))
+    }
+
+    if(isInternalTachoMotor(device, Port.B)) {
+      console.log("Motor on port B found", device)
+      const joy = new HorizontalJoystick({name: 'Motor B', minOutput: -20, maxOutput: 50, steps: 1})
+      devicesDiv.appendChild(joy.getRootElement())
+      joy.onChange(value => device.startMotor(value, value===0 ? 0 : 100))
     }
 
     device.on('disconnect', () => {
@@ -67,4 +72,8 @@ function shutdown() {
 
 function isHubRGB(device: Device): device is HubRGB {
   return device.type === DeviceType.HUB_RGB
+}
+function isInternalTachoMotor(device: Device, port?:Port): device is TachoMotor {
+  console.log("is motor?", device.type, device.port)
+  return device.type === DeviceType.INTERNAL_TACHO_MOTOR && (port===undefined || port===device.port)
 }
