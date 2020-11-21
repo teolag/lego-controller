@@ -1,23 +1,66 @@
-import {Device, DeviceType, DistanceColorSensor, FakeHub, Hub, HubRGB, HubRGBColor, Port, scanForHubs, TachoMotor} from 'lego-connect-browser'
+import {Device, DeviceType, DistanceColorSensor, Hub, HubRGB, HubRGBColor, Port, scanForHubs, TachoMotor} from 'lego-connect-browser'
 import { HubRGBController } from './devices/hub-rgb-controller'
 import { SensorHSLGraph } from './displays/sensor-hsl-graph'
 import { SensorRGBGraph } from './displays/sensor-rgb-graph'
 import { HorizontalJoystick } from './input-types/horizontal-joystick'
+import {version} from './package.json'
 let hub: Hub
+let connectButton: HTMLButtonElement
+let shutdownButton: HTMLButtonElement
+let devicesDiv: HTMLDivElement
 
-const connectButton = document.getElementById('connectButton')
-connectButton.addEventListener("click", connectToBoost)
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOM loaded")
 
-const shutdownButton = document.getElementById('shutdownButton')
-shutdownButton.addEventListener("click", shutdown)
+  const versionElem = document.getElementById("version") as HTMLDivElement
+  console.log("versionElem", versionElem)
+  if(versionElem) versionElem.textContent = 'Version: ' + version
+  
+  connectButton = document.getElementById('connectButton') as HTMLButtonElement
+  connectButton.addEventListener("click", connectToBoost)
+  
+  shutdownButton = document.getElementById('shutdownButton') as HTMLButtonElement
+  shutdownButton.addEventListener("click", shutdown)
+  
+  devicesDiv = document.getElementById('devices') as HTMLDivElement
+})
 
-const devicesDiv = document.getElementById('devices') as HTMLDivElement
 
 const swPath= 'service-worker.js'
 navigator.serviceWorker.register(swPath).then(reg => {
   console.log("Service worker registered", reg)
+  reg.onupdatefound = onUpdateFound
 })
 
+console.log("MUPP!")
+
+function onUpdateFound(event: Event) {
+  const reg = event.target as ServiceWorkerRegistration
+  
+  const installingWorker = reg.installing;
+  installingWorker.onstatechange = () => {
+    switch (installingWorker.state) {
+      case 'installed':
+        if (navigator.serviceWorker.controller) {
+          // At this point, the old content will have been purged and the fresh content will
+          // have been added to the cache.
+          // It's the perfect time to display a "New content is available; please refresh."
+          // message in the page's interface.
+          console.log('New or updated content is available.');
+          location.reload()
+        } else {
+          // At this point, everything has been precached.
+          // It's the perfect time to display a "Content is cached for offline use." message.
+          console.log('Content is now available offline!');
+        }
+        break;
+
+      case 'redundant':
+        console.error('The installing service worker became redundant.');
+        break;
+    }
+  }
+}
 
 async function connectToBoost() {
   hub = await scanForHubs();

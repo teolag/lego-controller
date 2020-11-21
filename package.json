@@ -1,13 +1,17 @@
 {
   "name": "lego-controller",
-  "version": "1.0.4",
-  "description": "",
+  "version": "1.0.13",
+  "description": "Bluetooth controller for LEGO Boost",
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build --no-content-hash index.html --public-url '.' --out-dir docs "
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "LEGO",
+    "Boost",
+    "Bluetooth"
+  ],
+  "author": "Teodor",
   "license": "ISC",
   "dependencies": {
     "lego-connect-browser": "file:../lego-connect-browser",
