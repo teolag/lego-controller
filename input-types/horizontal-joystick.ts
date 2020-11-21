@@ -56,7 +56,7 @@ export class HorizontalJoystick {
     this.plupp.classList.add('grabbed')
   }
   
-  private pointerMove(e) {
+  private pointerMove(e: PointerEvent) {
     e.preventDefault()
     let diff = e.clientX-this.downX
     const max = this.rootDiv.clientWidth/2 - this.plupp.offsetWidth/2
@@ -67,7 +67,7 @@ export class HorizontalJoystick {
     
   }
 
-  private pointerUp(e) {
+  private pointerUp(e: PointerEvent) {
     if(!this.grabbed) return 
     console.log("pointer up", e.type)
     this.plupp.removeEventListener('pointerup', this.pointerUpCall)
@@ -100,7 +100,11 @@ export class HorizontalJoystick {
     return this.rootDiv
   }
 
-  public onChange(changeHandler: (value)=>void) {
+  public onChange(changeHandler: (value: number)=>void) {
     this.changeHandler = changeHandler
+  }
+
+  public appendTo(parentElement: HTMLElement) {
+    parentElement.appendChild(this.rootDiv)
   }
 }

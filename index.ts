@@ -10,7 +10,7 @@ connectButton.addEventListener("click", connectToBoost)
 const shutdownButton = document.getElementById('shutdownButton')
 shutdownButton.addEventListener("click", shutdown)
 
-const devicesDiv = document.getElementById('devices')
+const devicesDiv = document.getElementById('devices') as HTMLDivElement
 
 const swPath= 'service-worker.js'
 navigator.serviceWorker.register(swPath).then(reg => {
@@ -35,16 +35,15 @@ async function connectToBoost() {
     
     if (isHubRGB(device)) {
       device.setColor(HubRGBColor.PINK)
-      const root = document.createElement('div')
-      const hubRGB = new HubRGBController(root, device)
-      devicesDiv.appendChild(root)
+      const hubRGB = new HubRGBController(device)
+      hubRGB.appendTo(devicesDiv)
     }
 
     if(isInternalTachoMotor(device, Port.A)) {
       console.log("Motor on port A found", device)
       const joy = new HorizontalJoystick({name: 'Motor A', minOutput: -5, maxOutput: 30, steps: 1})
-      devicesDiv.appendChild(joy.getRootElement())
       joy.onChange(value => device.startMotor(value, value===0 ? 0 : 100))
+      joy.appendTo(devicesDiv)
     }
 
     if(isInternalTachoMotor(device, Port.B)) {
