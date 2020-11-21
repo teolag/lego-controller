@@ -96,10 +96,6 @@ export class HorizontalJoystick {
     }
   }
 
-  public getRootElement() {
-    return this.rootDiv
-  }
-
   public onChange(changeHandler: (value: number)=>void) {
     this.changeHandler = changeHandler
   }

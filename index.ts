@@ -1,8 +1,9 @@
-import {Device, DeviceType, FakeHub, Hub, HubRGB, HubRGBColor, Port, scanForHubs, TachoMotor} from 'lego-connect-browser'
+import {Device, DeviceType, DistanceColorSensor, FakeHub, Hub, HubRGB, HubRGBColor, Port, scanForHubs, TachoMotor} from 'lego-connect-browser'
 import { HubRGBController } from './devices/hub-rgb-controller'
+import { SensorHSLGraph } from './displays/sensor-hsl-graph'
+import { SensorRGBGraph } from './displays/sensor-rgb-graph'
 import { HorizontalJoystick } from './input-types/horizontal-joystick'
 let hub: Hub
-let fakeHub: FakeHub
 
 const connectButton = document.getElementById('connectButton')
 connectButton.addEventListener("click", connectToBoost)
@@ -45,12 +46,21 @@ async function connectToBoost() {
       joy.onChange(value => device.startMotor(value, value===0 ? 0 : 100))
       joy.appendTo(devicesDiv)
     }
-
+    
     if(isInternalTachoMotor(device, Port.B)) {
       console.log("Motor on port B found", device)
       const joy = new HorizontalJoystick({name: 'Motor B', minOutput: -20, maxOutput: 50, steps: 1})
-      devicesDiv.appendChild(joy.getRootElement())
+      joy.appendTo(devicesDiv)
       joy.onChange(value => device.startMotor(value, value===0 ? 0 : 100))
+    }
+
+    if(isDistanceColorSensor(device)) {
+      console.log("Color sensor found!", device)
+      const rgbGraph = new SensorRGBGraph(device)
+      rgbGraph.appendTo(devicesDiv)
+
+      const hslGraph = new SensorHSLGraph(device)
+      hslGraph.appendTo(devicesDiv)
     }
 
     device.on('disconnect', () => {
@@ -72,7 +82,15 @@ function shutdown() {
 function isHubRGB(device: Device): device is HubRGB {
   return device.type === DeviceType.HUB_RGB
 }
+
+function isConnectedToPort(device: Device, port?: Port) {
+  return port===undefined || port===device.port
+}
+
 function isInternalTachoMotor(device: Device, port?:Port): device is TachoMotor {
-  console.log("is motor?", device.type, device.port)
-  return device.type === DeviceType.INTERNAL_TACHO_MOTOR && (port===undefined || port===device.port)
+  return device.type === DeviceType.INTERNAL_TACHO_MOTOR && isConnectedToPort(device, port)
+}
+
+function isDistanceColorSensor(device: Device, port?:Port): device is DistanceColorSensor {
+  return device.type === DeviceType.DISTANCE_COLOR_SENSOR && isConnectedToPort(device, port)
 }
