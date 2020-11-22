@@ -3,8 +3,8 @@
   "version": "1.0.14",
   "description": "Bluetooth controller for LEGO Boost",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build --no-content-hash index.html --public-url '.' --out-dir docs "
+    "start": "parcel src/index.html",
+    "build": "parcel build --no-content-hash src/index.html --public-url '.' --out-dir docs "
   },
   "keywords": [
     "LEGO",
