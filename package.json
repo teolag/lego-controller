@@ -1,6 +1,6 @@
 {
   "name": "lego-controller",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Bluetooth controller for LEGO Boost",
   "scripts": {
     "start": "parcel src/index.html",
