@@ -4,6 +4,7 @@
   "description": "Bluetooth controller for LEGO Boost",
   "scripts": {
     "start": "parcel src/index.html",
+    "prebuild": "rm -rf docs",
     "build": "parcel build --no-content-hash src/index.html --public-url '.' --out-dir docs "
   },
   "keywords": [
