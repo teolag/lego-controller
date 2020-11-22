@@ -1,45 +1,33 @@
-import { DistanceColorModes, DistanceColorSensor } from "lego-connect-browser"
+import { DistanceColorSensor } from "lego-connect-browser"
+import { HtmlWrapper } from "../html-wrapper"
 import {rgbToHsl} from '../utils'
+import {IHSL} from '../typings/IHSL'
 
-interface IHSL {
-  h: number
-  s: number
-  l: number
-}
 
-export class SensorHSLGraph {
-  private rootElem: HTMLDivElement
+export class SensorHSLGraph extends HtmlWrapper {
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
-  private sensor: DistanceColorSensor
   private history: IHSL[] = new Array(100).fill({h: 0, s: 0, l: 0})
   private channels = [
-    {prop: 'h', max: 1, color: '#444'},
+    {prop: 'h', max: 1, color: '#00a'},
     {prop: 's', max: 1, color: '#444'},
-    {prop: 'l', max: 1, color: '#444'},
+    {prop: 'l', max: 1, color: '#999'},
   ]
   
 
   constructor(sensor: DistanceColorSensor) {
-    this.rootElem = document.createElement('div')
+    super()
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
 
-    this.sensor = sensor
-    this.sensor.on('change', this.onColorChange.bind(this))
-    this.sensor.subscribe(DistanceColorModes.RGB, 5)
-
-    this.rootElem.appendChild(this.canvas)
+    sensor.on('change', this.onColorChange.bind(this))
+    this.rootElement.appendChild(this.canvas)
   }
 
   private onColorChange(data) {
     const hsl = rgbToHsl(data.r, data.g, data.b)
     this.history = [...this.history.slice(1, 100), {h: hsl.h, s: hsl.s, l: hsl.l}]
     this.redrawGraph()
-  }
-
-  public appendTo(parentElement: HTMLElement) {
-    parentElement.appendChild(this.rootElem)
   }
 
   private redrawGraph() {

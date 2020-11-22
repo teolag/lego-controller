@@ -1,5 +1,6 @@
-export class HorizontalJoystick {
-  private rootDiv: HTMLDivElement 
+import { HtmlWrapper } from "../html-wrapper"
+
+export class HorizontalJoystick extends HtmlWrapper {
   private valueElem: HTMLDivElement
   private plupp: HTMLDivElement 
   private grabbed: boolean
@@ -17,12 +18,12 @@ export class HorizontalJoystick {
   private value = 0
 
   constructor({name, minOutput = -1, maxOutput = 1, steps = 0.1}) {
+    super()
     this.minOutput = minOutput
     this.maxOutput = maxOutput
     this.steps = steps
 
-    this.rootDiv = document.createElement('div')
-    this.rootDiv.classList.add('horizontal-joystick')
+    this.rootElement.classList.add('horizontal-joystick')
 
     const nameElement = document.createElement("div")
     nameElement.textContent = name
@@ -34,11 +35,11 @@ export class HorizontalJoystick {
     
     this.plupp= document.createElement('div')
     this.plupp.classList.add('plupp')
-    this.rootDiv.addEventListener('pointerdown', this.pointerDown.bind(this))
+    this.rootElement.addEventListener('pointerdown', this.pointerDown.bind(this))
     
-    this.rootDiv.appendChild(this.plupp)
-    this.rootDiv.appendChild(nameElement)
-    this.rootDiv.appendChild(this.valueElem)
+    this.rootElement.appendChild(this.plupp)
+    this.rootElement.appendChild(nameElement)
+    this.rootElement.appendChild(this.valueElem)
   }
 
   private pointerDown(e: PointerEvent) {
@@ -59,7 +60,7 @@ export class HorizontalJoystick {
   private pointerMove(e: PointerEvent) {
     e.preventDefault()
     let diff = e.clientX-this.downX
-    const max = this.rootDiv.clientWidth/2 - this.plupp.offsetWidth/2
+    const max = this.rootElement.clientWidth/2 - this.plupp.offsetWidth/2
     if(diff>max) diff=max
     if(diff<-max) diff=-max
     this.plupp.style.transform = `translate(${diff}px, 0)`
@@ -100,7 +101,4 @@ export class HorizontalJoystick {
     this.changeHandler = changeHandler
   }
 
-  public appendTo(parentElement: HTMLElement) {
-    parentElement.appendChild(this.rootDiv)
-  }
 }

@@ -1,16 +1,10 @@
-import { DistanceColorModes, DistanceColorSensor } from "lego-connect-browser"
+import { DistanceColorSensor } from "lego-connect-browser"
+import { HtmlWrapper } from "../html-wrapper"
+import { IRGB } from "../typings/IRGB"
 
-interface IRGB {
-  r: number
-  g: number
-  b: number
-}
-
-export class SensorRGBGraph {
-  private rootElem: HTMLDivElement
+export class SensorRGBGraph extends HtmlWrapper {
   private canvas: HTMLCanvasElement
   private ctx: CanvasRenderingContext2D
-  private sensor: DistanceColorSensor
   private history: IRGB[] = new Array(100).fill({r: 0, g: 0, b: 0})
   private channels = [
     {prop: 'r', color: 'red'},
@@ -20,24 +14,18 @@ export class SensorRGBGraph {
   
 
   constructor(sensor: DistanceColorSensor) {
-    this.rootElem = document.createElement('div')
+    super()
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
+    sensor.on('change', this.onColorChange.bind(this))
 
-    this.sensor = sensor
-    this.sensor.on('change', this.onColorChange.bind(this))
-    this.sensor.subscribe(DistanceColorModes.RGB, 5)
-
-    this.rootElem.appendChild(this.canvas)
+    this.rootElement.appendChild(this.canvas)
   }
 
   private onColorChange(data) {
-    this.history = [...this.history.slice(1, 100), {r:data.r, g:data.g, b:data.b}]
+    const lighten = 1.3
+    this.history = [...this.history.slice(1, 100), {r:data.r*1.4*lighten, g:data.g*1.45*lighten, b:data.b*lighten}]
     this.redrawGraph()
-  }
-
-  public appendTo(parentElement: HTMLElement) {
-    parentElement.appendChild(this.rootElem)
   }
 
   private redrawGraph() {

@@ -1,11 +1,11 @@
 import { HubRGB, HubRGBColor } from "lego-connect-browser";
+import { HtmlWrapper } from "../html-wrapper";
 
-export class HubRGBController {
+export class HubRGBController extends HtmlWrapper {
   private colors = [HubRGBColor.BLUE, HubRGBColor.YELLOW, HubRGBColor.RED]
-  private rootElem: HTMLDivElement
 
   constructor(device: HubRGB) {
-    this.rootElem = document.createElement('div')
+    super()
 
     this.colors.forEach(color => {
       const button = document.createElement('button')
@@ -13,12 +13,7 @@ export class HubRGBController {
       button.addEventListener('click', () => {
         device.setColor(color)
       })
-      this.rootElem.appendChild(button)
+      this.rootElement.appendChild(button)
     })
   }
-
-  public appendTo(parentElem: HTMLElement) {
-    parentElem.appendChild(this.rootElem)
-  }
-
 }
